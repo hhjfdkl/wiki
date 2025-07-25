@@ -1,0 +1,6 @@
+create type content_type AS ENUM (
+  'paragraph'
+, 'ordered_list'
+, 'unordered_list'
+, 'table'
+);

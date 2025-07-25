@@ -1,0 +1,17 @@
+insert into topic (topic_name, topic_position)
+values ('topic1', 100), ('topic2', 200), ('topic3', 300);
+
+insert into subtopic (t_id, st_position, st_name) values 
+(1, 100, 'subtopic1')
+,(1, 200, 'subtopic2')
+,(1, 300, 'subtopic3')
+,(1, 400, 'subtopic4')
+,(2, 100, 'subtopic1')
+,(2, 200, 'subtopic2')
+,(2, 300, 'subtopic3')
+,(3, 100, 'subtopic1')
+,(3, 200, 'subtopic2')
+,(3, 300, 'subtopic3')
+,(3, 400, 'subtopic4')
+,(3, 500, 'subtopic5')
+;
