@@ -49,4 +49,14 @@ public class TopicRepoTests
         Topic t = tr.getTopicByName("topic1");
         System.out.println(t.getId() + " | " + t.getName() + " | " + t.getPosition() + " | " + t.getClass());
     }
+
+    @Test
+    public void createTopicTest()
+    {
+        Topic t = tr.getHighestId();
+        System.out.println(t.getName() + " obtained");
+        Topic t2 = tr.createTopic(new Topic(t.getId() + 1, "tgsuifgitvcmnuit67i54ebmcvxreiuou", t.getPosition()*10000));
+        System.out.println(t2.getName() + " created successfully");
+    }
+
 }

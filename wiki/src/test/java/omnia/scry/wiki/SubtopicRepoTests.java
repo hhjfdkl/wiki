@@ -31,4 +31,14 @@ public class SubtopicRepoTests
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
     }
+
+    @Test
+    public void createSubtopicTest()
+    {
+        Subtopic st = sr.getHighestId();
+        System.out.println(st.getName() + " obtained");
+        Subtopic st2 = sr.createSubtopic(new Subtopic(st.getId() + 1, st.getTopicId(), st.getPosition() * 10000, st.getName() + " fdsafdsafdsagh"));
+        System.out.println(st2.getName() + " created successfully");
+    }
+
 }

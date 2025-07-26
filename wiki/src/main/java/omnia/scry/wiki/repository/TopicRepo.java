@@ -22,7 +22,8 @@ public class TopicRepo implements TopicDao
 
 
     @Override
-    public List<String> getAllTopicNames() {
+    public List<String> getAllTopicNames()
+    {
         List<String> topicNames = new ArrayList<>();
         String sql = "SELECT topic_name FROM topic ORDER BY topic_name asc";
 
@@ -62,7 +63,8 @@ public class TopicRepo implements TopicDao
     }
 
     @Override
-    public Topic getTopicByName(String name) {
+    public Topic getTopicByName(String name)
+    {
 
         try {
             String sql = "SELECT topic_id, topic_name, topic_position FROM topic WHERE topic_name = ?";
@@ -75,6 +77,43 @@ public class TopicRepo implements TopicDao
 
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not get connection from getTopicByName: " + e.getMessage());
+        }
+        return null;
+    }
+
+    @Override
+    public Topic createTopic(Topic topic)
+    {
+
+        try
+        {
+            String sql = "INSERT INTO topic (topic_name, topic_position) VALUES (?, ?)";   //should probably have a separate process to check positions?
+            if (jdbcTemplate.update(sql,topic.getName(), topic.getPosition())==1)
+            {
+                System.out.println("Created topic successfully!");
+                return topic;
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from createTopic: " + e.getMessage());
+        }
+        System.out.println("Topic creation failed...");
+        return null;
+    }
+
+    //for tests, not needed in the DAO interface right now
+    public Topic getHighestId()
+    {
+
+        try
+        {
+            String sql = "select topic_id, topic_name, topic_position from topic WHERE topic_id = (SELECT MAX(topic_id) FROM topic)";
+            SqlRowSet result = jdbcTemplate.queryForRowSet(sql);
+            if(result.next())
+            {
+                return mapRowToTopic(result);
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from getHighestId: " + e.getMessage());
         }
         return null;
     }

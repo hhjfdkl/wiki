@@ -2,6 +2,7 @@ package omnia.scry.wiki.repository;
 
 import omnia.scry.wiki.daos.SubtopicDao;
 import omnia.scry.wiki.transfer_objects.Subtopic;
+import omnia.scry.wiki.transfer_objects.Topic;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -38,6 +39,42 @@ public class SubtopicRepo implements SubtopicDao
             System.out.println("Could not connect at getSubtopicsByTopicName: " + e.getMessage());
         }
         return subtopics;
+    }
+
+    @Override
+    public Subtopic createSubtopic(Subtopic subtopic) {
+
+        try
+        {
+            String sql = "INSERT INTO subtopic (t_id, st_position, st_name) VALUES (?, ?, ?)";
+            if(jdbcTemplate.update(sql, subtopic.getTopicId(), subtopic.getPosition(), subtopic.getName())==1)
+            {
+                System.out.println("Created subtopic successfully!");
+                return subtopic;
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from createSubtopic: " + e.getMessage());
+        }
+        return null;
+    }
+
+
+    //for tests, not needed in the DAO interface right now
+    public Subtopic getHighestId()
+    {
+
+        try
+        {
+            String sql = "select st_id, t_id, st_position, st_name from subtopic WHERE st_id = (SELECT MAX(st_id) FROM subtopic)";
+            SqlRowSet result = jdbcTemplate.queryForRowSet(sql);
+            if(result.next())
+            {
+                return mapRowToSubtopic(result);
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from getHighestId: " + e.getMessage());
+        }
+        return null;
     }
 
     private Subtopic mapRowToSubtopic(SqlRowSet rs)

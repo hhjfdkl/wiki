@@ -8,6 +8,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @SpringBootTest
@@ -36,4 +37,26 @@ public class ContentRepoTests
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
     }
+
+    @Test
+    public void createContentTest()
+    {
+        List<String> ls = new ArrayList<>();
+        for(int i = 0 ; i < 5 ; i++)
+        {
+            ls.add("value: " + i);
+        }
+        Content c = cr.createContent(new Content(0, 8, 20000, "Lorem ipsum", ls, false));
+        System.out.println("cid : " + c.getId());
+        System.out.println("sid : " + c.getSubtopicId());
+        System.out.println("pos : " + c.getPosition());
+        System.out.println("con : " + c.getContent());
+        System.out.println("  Listed...");
+        for(String s : c.getListedContent())
+        {
+            System.out.println("  - " + s);
+        }
+        System.out.println("ord : " + c.isOrdered());
+    }
+
 }

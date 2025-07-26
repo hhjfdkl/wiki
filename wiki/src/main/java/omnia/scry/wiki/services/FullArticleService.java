@@ -5,6 +5,7 @@ import omnia.scry.wiki.daos.SubtopicDao;
 import omnia.scry.wiki.daos.TopicDao;
 import omnia.scry.wiki.transfer_objects.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +39,10 @@ public class FullArticleService
         return new FullArticle(topic, subAndContent);
 
     }
+
+
+    
+
 
 
 }

@@ -53,4 +53,10 @@ public class Content
     public boolean isOrdered() {
         return isOrdered;
     }
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

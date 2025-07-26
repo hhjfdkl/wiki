@@ -21,21 +21,64 @@ public class ContentRepo implements ContentDao
     }
 
     @Override
-    public Content createParagraph(int subtopicId, String content) {
-    //TODO
+    public Content createContent(Content content)
+    {
+
         try
         {
+            String sqlContent = "INSERT INTO content (st_id, c_position, c_type, content) VALUES (?, ?, ?::content_type, ?) RETURNING c_id";
+            String contentType = "paragraph";
+            String sqlListed = null;
+            if(content.getListedContent() != null)
+            {
+                sqlListed = "INSERT INTO listed_content (c_id, lc_position, lc_content) VALUES (?, ?, ?)";
+                contentType = "unordered_list";
+                if(content.isOrdered())
+                {
+                    contentType = "ordered_list";
+                }
 
-            String sql = "";
+            }
+
+            Integer id = jdbcTemplate.queryForObject
+                    (
+                      sqlContent
+                    , Integer.class
+                    , content.getSubtopicId()
+                    , content.getPosition()
+                    , contentType
+                    , content.getContent()
+            );
+
+            if (id != null) {
+                boolean contentSuccess = id > 0;
+
+                if (sqlListed != null) {
+                    for (int i = 0; i < content.getListedContent().size(); i++) {
+                        contentSuccess = jdbcTemplate.update(
+                                sqlListed
+                                , id, i * 100, content.getListedContent().get(i)
+                        ) == 1;
+                    }
+                }
+
+                if (contentSuccess) {
+                    content.setId(id);
+                    return content;
+                }
+
+            }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not connect in createContent: " + e.getMessage());
+            throw e;
         }
 
         return null;
     }
 
     @Override
-    public List<Content> getContentBySubtopicId(int subtopicId) {
+    public List<Content> getContentBySubtopicId(int subtopicId)
+    {
         List<Content> content = new ArrayList<>();
 
         try
@@ -79,7 +122,9 @@ public class ContentRepo implements ContentDao
 
             }
         } catch (CannotGetJdbcConnectionException e) {
+
             System.out.println("Could not connect in getContentBySubtopicId: " + e.getMessage());
+            throw e;
         }
         return content;
     }
@@ -108,5 +153,16 @@ public class ContentRepo implements ContentDao
                 , listedContent
                 , isOrdered
         );
+    }
+
+    private List<String> mapRowToList(SqlRowSet rs)
+    {
+        List<String> strings = new ArrayList<>();
+        while(rs.next())
+        {
+            strings.add(rs.getString("lc_content"));
+        }
+
+        return strings;
     }
 }
