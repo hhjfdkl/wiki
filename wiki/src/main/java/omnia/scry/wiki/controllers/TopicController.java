@@ -1,6 +1,7 @@
 package omnia.scry.wiki.controllers;
 
 import omnia.scry.wiki.daos.TopicDao;
+import omnia.scry.wiki.services.TopicService;
 import omnia.scry.wiki.transfer_objects.Topic;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,16 +13,18 @@ import java.util.List;
 @CrossOrigin
 public class TopicController
 {
-    private TopicDao dao;
+    //There should be a service here between the controller and DAO
+    //That way, the controller just points to the service
+    private TopicService topicService;
 
-    public TopicController(TopicDao dao)
+    public TopicController(TopicService topicService)
     {
-        this.dao = dao;
+        this.topicService = topicService;
     }
 
     @GetMapping("/test")
     public List<Topic> getTopicList()
     {
-        return dao.getAllTopics();
+        return topicService.getAllTopics();
     }
 }

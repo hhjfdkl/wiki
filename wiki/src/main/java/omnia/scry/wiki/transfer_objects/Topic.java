@@ -4,17 +4,15 @@ public class Topic
 {
     private int id;
     private String name;
-    private int position;
-    //private List<Subtopic> subtopics;
+    private int position;   //does order matter here? Just sort alphabetically?
 
-    public Topic(int id, String name, int position
-    //, List<Subtopic> subtopics
-    ) {
+
+    public Topic(int id, String name, int position) {
         this.id = id;
         this.name = name;
         this.position = position;
-        //this.subtopic = subtopics
     }
+
 
 
     public int getId() {

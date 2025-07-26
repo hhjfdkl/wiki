@@ -20,6 +20,26 @@ public class TopicRepo implements TopicDao
         this.jdbcTemplate = jdbcTemplate;
     }
 
+
+    @Override
+    public List<String> getAllTopicNames() {
+        List<String> topicNames = new ArrayList<>();
+        String sql = "SELECT topic_name FROM topic ORDER BY topic_name asc";
+
+        try
+        {
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql);
+            while(results.next())
+            {
+                topicNames.add(results.getString("topic_name"));
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Connection failure in getAllTopics from TopicRepo: " + e.getMessage());
+        }
+
+        return topicNames;
+    }
+
     @Override
     public List<Topic> getAllTopics()
     {
@@ -38,16 +58,25 @@ public class TopicRepo implements TopicDao
             System.out.println("Connection failure in getAllTopics from TopicRepo: " + e.getMessage());
         }
 
-        //testing
-        for(Topic topic : topics)
-        {
-            System.out.println("cla : " + topic.getClass());
-            System.out.println("ID  : " + topic.getId());
-            System.out.println("nam : " + topic.getName());
-            System.out.println("pos : " + topic.getPosition());
-        }
-
         return topics;
+    }
+
+    @Override
+    public Topic getTopicByName(String name) {
+
+        try {
+            String sql = "SELECT topic_id, topic_name, topic_position FROM topic WHERE topic_name = ?";
+            SqlRowSet results = jdbcTemplate.queryForRowSet(sql, name);
+            if(results.next())
+            {
+                return mapRowToTopic(results);
+            }
+
+
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from getTopicByName: " + e.getMessage());
+        }
+        return null;
     }
 
     private Topic mapRowToTopic(SqlRowSet rs)

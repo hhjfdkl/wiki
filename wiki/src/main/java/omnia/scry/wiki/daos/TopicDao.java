@@ -6,5 +6,8 @@ import java.util.List;
 
 public interface TopicDao
 {
+    List<String> getAllTopicNames();
     List<Topic> getAllTopics();
+
+    Topic getTopicByName(String name);
 }
