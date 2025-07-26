@@ -17,8 +17,6 @@ public class FullArticle
         this.subtopics = subtopics;
     }
 
-//    public FullArticle(){}
-
 
     public Topic getTopic() {
         return topic;
@@ -28,12 +26,4 @@ public class FullArticle
         return subtopics;
     }
 
-
-//    public void setTopic(Topic topic) {
-//        this.topic = topic;
-//    }
-//
-//    public void setSubtopics(List<SubtopicWithContent> subtopics) {
-//        this.subtopics = subtopics;
-//    }
 }

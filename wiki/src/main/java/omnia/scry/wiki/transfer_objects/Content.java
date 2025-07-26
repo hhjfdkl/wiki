@@ -1,7 +1,5 @@
 package omnia.scry.wiki.transfer_objects;
 
-import omnia.scry.wiki.ContentType;
-
 import java.util.List;
 
 public class Content
@@ -11,7 +9,7 @@ public class Content
     private int position;
     private String content;
     private List<String> listedContent; //in the controller, check this to see if we need to make lists
-//    private ContentType type;
+    private boolean isOrdered;
 
 
     public Content(int id, int subtopicId, int position, String content) {
@@ -21,12 +19,13 @@ public class Content
         this.content = content;
     }
 
-    public Content(int id, int subtopicId, int position, String content, List<String> listedContent) {
+    public Content(int id, int subtopicId, int position, String content, List<String> listedContent, boolean isOrdered) {
         this.id = id;
         this.subtopicId = subtopicId;
         this.position = position;
         this.content = content;
         this.listedContent = listedContent;
+        this.isOrdered = isOrdered;
     }
 
 
@@ -49,5 +48,9 @@ public class Content
 
     public List<String> getListedContent() {
         return listedContent;
+    }
+
+    public boolean isOrdered() {
+        return isOrdered;
     }
 }

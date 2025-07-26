@@ -13,8 +13,6 @@ import java.util.List;
 @CrossOrigin
 public class TopicController
 {
-    //There should be a service here between the controller and DAO
-    //That way, the controller just points to the service
     private TopicService topicService;
 
     public TopicController(TopicService topicService)

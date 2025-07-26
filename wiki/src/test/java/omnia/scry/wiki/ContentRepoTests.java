@@ -25,6 +25,14 @@ public class ContentRepoTests
         for(Content c : content)
         {
             System.out.println(c.getContent());
+            if(c. getListedContent() != null)
+            {
+                for(String s : c.getListedContent())
+                {
+                    System.out.println("li : " + s);
+                }
+            }
+
             System.out.println("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
         }
     }

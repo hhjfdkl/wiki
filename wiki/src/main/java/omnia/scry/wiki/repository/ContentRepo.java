@@ -40,11 +40,43 @@ public class ContentRepo implements ContentDao
 
         try
         {
-            String sql = "SELECT c_id, st_id, c_position, c_type, content FROM content WHERE st_id = ?";
+            String sql = "SELECT c_id, st_id, c_position, c_type, content FROM content WHERE st_id = ? ORDER BY c_position ASC";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, subtopicId);
             while(results.next())
             {
-                content.add(mapRowToContent(results));
+                String type = results.getString("c_type");
+                if(type.equals("ordered_list"))
+                {
+                    String sql2 =
+                            "SELECT lc_id, lc.c_id, lc_position, lc_content FROM listed_content AS lc " +
+                            "JOIN content AS c ON c.c_id = lc.c_id " +
+                            "WHERE lc.c_id = " + results.getInt("c_id") +
+                            " ORDER BY lc.lc_position ASC";
+                    content.add(
+                            mapRowAndListedContentToContent(
+                                    results, jdbcTemplate.queryForRowSet(sql2), true
+                            )
+                    );
+
+
+                } else if(type.equals("unordered_list")) {
+                    String sql2 =
+                            "SELECT lc_id, lc.c_id, lc_position, lc_content FROM listed_content AS lc " +
+                                    "JOIN content AS c ON c.c_id = lc.c_id " +
+                                    "WHERE lc.c_id = " + results.getInt("c_id") +
+                                    " ORDER BY lc.lc_position ASC";
+                    content.add(
+                            mapRowAndListedContentToContent(
+                                    results, jdbcTemplate.queryForRowSet(sql2), false
+                            )
+                    );
+
+                } else {
+                    content.add(mapRowToContent(results));
+                }
+
+
+
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not connect in getContentBySubtopicId: " + e.getMessage());
@@ -59,6 +91,22 @@ public class ContentRepo implements ContentDao
                 , rs.getInt("st_id")
                 , rs.getInt("c_position")
                 , rs.getString("content")
+        );
+    }
+
+    private Content mapRowAndListedContentToContent(SqlRowSet originalRs, SqlRowSet listRs, boolean isOrdered)
+    {
+        List<String> listedContent = new ArrayList<>();
+        while(listRs.next()) {
+            listedContent.add(listRs.getString("lc_content"));
+        }
+        return new Content(
+                  originalRs.getInt("c_id")
+                , originalRs.getInt("st_id")
+                , originalRs.getInt("c_position")
+                , originalRs.getString("content")
+                , listedContent
+                , isOrdered
         );
     }
 }
