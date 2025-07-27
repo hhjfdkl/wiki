@@ -7,7 +7,7 @@ import java.util.List;
  * This is the most commonly used object for accessing data on a per-page basis
  * So when a user clicks on a Topic (article name), this object is where all that data comes from
  */
-public class FullArticle
+public class FullArticle implements FragmentDesignation
 {
     private Topic topic;
     private List<SubtopicWithContent> subtopics;
@@ -26,4 +26,8 @@ public class FullArticle
         return subtopics;
     }
 
+    @Override
+    public String getFragType() {
+        return "article";
+    }
 }

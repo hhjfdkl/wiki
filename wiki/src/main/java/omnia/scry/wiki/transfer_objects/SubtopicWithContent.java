@@ -5,7 +5,7 @@ import java.util.List;
 /**
  * Class to package together the Subtopic with its content
  */
-public class SubtopicWithContent
+public class SubtopicWithContent implements FragmentDesignation
 {
     private Subtopic subtopic;
     private List<Content> content;
@@ -21,5 +21,10 @@ public class SubtopicWithContent
 
     public List<Content> getContent() {
         return content;
+    }
+
+    @Override
+    public String getFragType() {
+        return "subtopic";
     }
 }

@@ -35,4 +35,5 @@ public class ListedContent
     public String getContent() {
         return content;
     }
+
 }

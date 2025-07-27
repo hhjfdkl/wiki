@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+  <title>Fragments</title>
+</head>
+<body>
+<!--Master container for the page (check if needed)-->
+<div th:fragment="article">
+  <main>
+    <section class="content">
+      <h1 th:text="${fragment.topic.name ?: 'No Topic'}">Topic Name</h1>
+      <div class=""><!--Needs new class name for style-->
+        <article class="" th:each="fragment : ${fragment.subtopics}">
+          <div th:replace="~{fragments :: ${fragment.fragType}}"></div>
+        </article>
+      </div>
+    </section>
+  </main>
+</div>
+
+<!--Containers for topics-->
+<div th:fragment="subtopic">
+  <h2 th:text="${fragment.subtopic.name ?: 'No Title'}"></h2>
+  <div th:each="fragment : ${fragment.content}">
+    <div th:replace="~{fragments :: ${fragment.fragType}}"></div>
+  </div>
+</div>
+
+
+<!--Ordered List-->
+<ol th:fragment="ordered-list">
+  <li th:each="item : ${fragment.content}" th:text="${item ?: 'Unnamed Item'}"></li>
+</ol>
+
+
+<!--Unordered List-->
+<ul th:fragment="unordered-list">
+  <li th:each="item : ${fragment.content}" th:text="${item ?: 'Unnamed Item'}"></li>
+</ul>
+
+
+<!--Paragraph-->
+<div th:fragment="paragraph">
+  <p  th:text="${fragment.content ?: 'No content'}"></p>
+
+  <ol th:if="${fragment.listedContent != null and !#lists.isEmpty(fragment.listedContent) and fragment.isOrdered}">
+    <li th:each="item : ${fragment.listedContent}" th:text="${item.content ?: 'Unnamed Item'}"></li>
+  </ol>
+
+  <ul th:if="${fragment.listedContent != null and !#lists.isEmpty(fragment.listedContent) and !fragment.isOrdered}">
+    <li th:each="item : ${fragment.listedContent}" th:text="${item.content ?: 'Unnamed Item'}"></li>
+  </ul>
+</div>
+
+</body>
+</html>

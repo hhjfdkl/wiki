@@ -2,6 +2,7 @@ package omnia.scry.wiki.controllers;
 
 import omnia.scry.wiki.services.FullArticleService;
 import omnia.scry.wiki.transfer_objects.FullArticle;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,10 +19,11 @@ public class FullArticleController
         this.f = f;
     }
 
-    @GetMapping("/topics/{topic}")
+    @GetMapping("/json-data/{topic}")
     public FullArticle getByTopicName(@PathVariable String topic)
     {
         return f.getFullArticle(topic);
     }
+
 
 }

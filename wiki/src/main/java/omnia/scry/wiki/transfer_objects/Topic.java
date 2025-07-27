@@ -27,8 +27,4 @@ public class Topic
         return position;
     }
 
-    //public List<Subtopic> getSubtopics() {
-    //  return subtopics;
-    //}
-
 }
