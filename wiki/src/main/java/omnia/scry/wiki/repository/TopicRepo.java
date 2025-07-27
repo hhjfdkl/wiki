@@ -36,6 +36,7 @@ public class TopicRepo implements TopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Connection failure in getAllTopics from TopicRepo: " + e.getMessage());
+            throw e;
         }
 
         return topicNames;
@@ -57,6 +58,7 @@ public class TopicRepo implements TopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Connection failure in getAllTopics from TopicRepo: " + e.getMessage());
+            throw e;
         }
 
         return topics;
@@ -77,6 +79,25 @@ public class TopicRepo implements TopicDao
 
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not get connection from getTopicByName: " + e.getMessage());
+            throw e;
+        }
+        return null;
+    }
+
+    @Override
+    public Topic updateTopic(Topic topic) {
+
+        try
+        {
+            String sql = "UPDATE topic SET (topic_name, topic_position) = ROW (?, ?) WHERE topic_id = ?";
+            if(jdbcTemplate.update(sql, topic.getName(), topic.getPosition(), topic.getId())==1)
+            {
+                System.out.println("Updated topic successfully!");
+                return topic;
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from updateTopic: " + e.getMessage());
+            throw e;
         }
         return null;
     }
@@ -95,6 +116,7 @@ public class TopicRepo implements TopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not get connection from createTopic: " + e.getMessage());
+            throw e;
         }
         System.out.println("Topic creation failed...");
         return null;
@@ -114,6 +136,7 @@ public class TopicRepo implements TopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not get connection from getHighestId: " + e.getMessage());
+            throw e;
         }
         return null;
     }

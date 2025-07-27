@@ -11,4 +11,6 @@ public interface SubtopicDao
 
     List<Subtopic> getSubtopicsByTopicName(String topicName);
 
+
+    Subtopic updateSubtopic(Subtopic subtopic);
 }

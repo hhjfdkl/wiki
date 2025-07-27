@@ -18,7 +18,7 @@ public class FullArticleController
         this.f = f;
     }
 
-    @GetMapping("/{topic}")
+    @GetMapping("/topics/{topic}")
     public FullArticle getByTopicName(@PathVariable String topic)
     {
         return f.getFullArticle(topic);

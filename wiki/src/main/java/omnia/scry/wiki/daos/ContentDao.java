@@ -10,4 +10,7 @@ public interface ContentDao
 
 
     List<Content> getContentBySubtopicId(int subtopicId);
+
+
+    Content updateContent(Content content);
 }

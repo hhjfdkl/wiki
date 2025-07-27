@@ -37,8 +37,26 @@ public class SubtopicRepo implements SubtopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not connect at getSubtopicsByTopicName: " + e.getMessage());
+            throw e;
         }
         return subtopics;
+    }
+
+    @Override
+    public Subtopic updateSubtopic(Subtopic subtopic) {
+        try
+        {
+            String sql = "UPDATE subtopic SET (t_id, st_position, st_name) = ROW (?, ?, ?) WHERE st_id =?";
+            if(jdbcTemplate.update(sql, subtopic.getTopicId(), subtopic.getPosition(), subtopic.getName(), subtopic.getId())==1)
+            {
+                System.out.println("Updated subtopic successfully!");
+                return subtopic;
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+            System.out.println("Could not get connection from updateSubtopic: " + e.getMessage());
+            throw e;
+        }
+        return null;
     }
 
     @Override
@@ -54,6 +72,7 @@ public class SubtopicRepo implements SubtopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not get connection from createSubtopic: " + e.getMessage());
+            throw e;
         }
         return null;
     }
@@ -73,6 +92,7 @@ public class SubtopicRepo implements SubtopicDao
             }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not get connection from getHighestId: " + e.getMessage());
+            throw e;
         }
         return null;
     }

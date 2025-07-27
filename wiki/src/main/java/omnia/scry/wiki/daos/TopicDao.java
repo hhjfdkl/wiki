@@ -15,4 +15,7 @@ public interface TopicDao
     Topic getTopicByName(String name);
 
 
+    Topic updateTopic(Topic topic);
+
+    
 }
