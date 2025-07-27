@@ -1,3 +1,13 @@
+DROP TABLE IF EXISTS topic, subtopic, content, listed_content CASCADE;
+DROP TYPE IF EXISTS content_type;
+
+create type content_type AS ENUM (
+  'paragraph'
+, 'ordered_list'
+, 'unordered_list'
+);
+
+
 CREATE TABLE topic
 (
     topic_id SERIAL PRIMARY KEY,
