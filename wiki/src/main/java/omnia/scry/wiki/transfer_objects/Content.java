@@ -2,13 +2,13 @@ package omnia.scry.wiki.transfer_objects;
 
 import java.util.List;
 
-public class Content
+public class Content implements FragmentDesignation
 {
     private int id;
     private int subtopicId;
     private int position;
     private String content;
-    private List<ListedContent> listedContent; //in the controller, check this to see if we need to make lists
+    private List<ListedContent> listedContent;
     private boolean isOrdered;
 
 
@@ -59,4 +59,9 @@ public class Content
         this.id = id;
     }
 
+    @Override
+    public String getFragType() {
+        return "paragraph";
+
+    }
 }
