@@ -157,11 +157,14 @@ public class ContentRepo implements ContentDao
                 }
             }
 
-            boolean contentSuccess = jdbcTemplate.update
-                    (sqlContent, content.getSubtopicId(), content.getPosition(), contentType, content.getContent(), content.getId()
-                    ) == 1;
-
-            if (contentSuccess)
+            if (jdbcTemplate.update
+                    (sqlContent
+                            , content.getSubtopicId()
+                            , content.getPosition()
+                            , contentType
+                            , content.getContent()
+                            , content.getId()
+                    ) == 1)
             {
 
 
@@ -184,10 +187,7 @@ public class ContentRepo implements ContentDao
                     }
                 }
 
-                if (contentSuccess) {
-
-                    return content;
-                }
+                return content;
             }
         } catch (CannotGetJdbcConnectionException e) {
 
@@ -209,10 +209,8 @@ public class ContentRepo implements ContentDao
 
     private Content mapRowAndListedContentToContent(SqlRowSet originalRs, SqlRowSet listRs, boolean isOrdered)
     {
-        List<ListedContent> listedContent = new ArrayList<>();
-        while(listRs.next()) {
-            listedContent.add(new ListedContent(listRs.getInt("lc_id"), listRs.getInt("c_id"), listRs.getInt("lc_position"), listRs.getString("lc_content")));
-        }
+        List<ListedContent> listedContent = mapRowToListedContent(listRs);
+
         return new Content(
                   originalRs.getInt("c_id")
                 , originalRs.getInt("st_id")
@@ -223,14 +221,21 @@ public class ContentRepo implements ContentDao
         );
     }
 
-    private List<String> mapRowToList(SqlRowSet rs)
+    private List<ListedContent> mapRowToListedContent(SqlRowSet rs)
     {
-        List<String> strings = new ArrayList<>();
+        List<ListedContent> listedContent = new ArrayList<>();
         while(rs.next())
         {
-            strings.add(rs.getString("lc_content"));
+            listedContent.add(
+                    new ListedContent(
+                    rs.getInt("lc_id")
+                    , rs.getInt("c_id")
+                    , rs.getInt("lc_position")
+                    , rs.getString("lc_content")
+                    )
+            );
         }
 
-        return strings;
+        return listedContent;
     }
 }

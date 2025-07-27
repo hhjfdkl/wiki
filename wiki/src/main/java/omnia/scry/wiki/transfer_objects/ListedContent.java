@@ -15,6 +15,7 @@ public class ListedContent
         this.content = content;
     }
 
+
     public ListedContent(String content)
     {
         this.content = content;

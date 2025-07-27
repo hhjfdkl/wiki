@@ -1,6 +1,6 @@
 package omnia.scry.wiki.transfer_objects;
 
-public class Topic
+public class Topic implements FragmentDesignation
 {
     private int id;
     private String name;
@@ -27,4 +27,8 @@ public class Topic
         return position;
     }
 
+    @Override
+    public String getFragType() {
+        return "topic";
+    }
 }

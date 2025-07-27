@@ -10,7 +10,16 @@
     </style>
 </head>
 <body>
-
+<header>
+    <div>
+        <a href="/"><strong>Wiki Name</strong></a>
+        <nav>
+            <a href="/">Home</a>
+<!--            <a href="/realms">Subjects</a>-->
+            <a href="/topics">Articles</a>
+        </nav>
+    </div>
+</header>
 <div th:each="fragment : ${fragments}">
     <div th:replace="~{fragments :: ${fragment.fragType}}"></div>
 </div>

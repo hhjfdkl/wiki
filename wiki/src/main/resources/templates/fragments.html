@@ -4,6 +4,10 @@
   <title>Fragments</title>
 </head>
 <body>
+
+<!--Topic nav-->
+<a th:fragment="topic" th:href="@{/topics/{topic}(topic=${fragment.name})}" th:text="${fragment.name}"></a>
+
 <!--Master container for the page-->
 <div th:fragment="article">
   <main>
@@ -18,7 +22,7 @@
   </main>
 </div>
 
-<!--Containers for topics-->
+<!--Containers for subtopics-->
 <div th:fragment="subtopic">
   <h2 th:text="${fragment.subtopic.name ?: 'No Title'}"></h2>
   <div th:each="fragment : ${fragment.content}">
