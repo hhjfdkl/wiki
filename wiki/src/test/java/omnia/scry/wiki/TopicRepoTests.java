@@ -49,4 +49,27 @@ public class TopicRepoTests
         Topic t = tr.getTopicByName("topic1");
         System.out.println(t.getId() + " | " + t.getName() + " | " + t.getPosition() + " | " + t.getClass());
     }
+
+    @Test
+    public void createTopicTest()
+    {
+        Topic t = tr.getHighestId();
+        System.out.println(t.getName() + " obtained");
+        Topic t2 = tr.createTopic(new Topic(t.getId() + 1, "tgsuifgitvcmnuit67i54ebmcvxreiuou", t.getPosition()*10000));
+        System.out.println(t2.getName() + " created successfully");
+    }
+
+    @Test
+    public void updateTopicTest()
+    {
+        Topic t = tr.getHighestId();
+        System.out.println(t.getName() + " obtained");
+        System.out.println(t.getId() + " | " + t.getName() + " | " + t.getPosition());
+        tr.updateTopic(new Topic(t.getId(), "tgsuifgitvcmnuit67i54ebmcvxreiuou", t.getPosition()*10000));
+
+        Topic t3 = tr.getHighestId();
+        System.out.println(t3.getName() + " updated successfully");
+        System.out.println(t3.getId() + " | " + t3.getName() + " | " + t3.getPosition());
+    }
+
 }

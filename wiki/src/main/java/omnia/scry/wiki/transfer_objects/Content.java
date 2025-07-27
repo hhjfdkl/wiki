@@ -8,7 +8,7 @@ public class Content
     private int subtopicId;
     private int position;
     private String content;
-    private List<String> listedContent; //in the controller, check this to see if we need to make lists
+    private List<ListedContent> listedContent; //in the controller, check this to see if we need to make lists
     private boolean isOrdered;
 
 
@@ -19,7 +19,7 @@ public class Content
         this.content = content;
     }
 
-    public Content(int id, int subtopicId, int position, String content, List<String> listedContent, boolean isOrdered) {
+    public Content(int id, int subtopicId, int position, String content, List<ListedContent> listedContent, boolean isOrdered) {
         this.id = id;
         this.subtopicId = subtopicId;
         this.position = position;
@@ -46,11 +46,17 @@ public class Content
         return content;
     }
 
-    public List<String> getListedContent() {
+    public List<ListedContent> getListedContent() {
         return listedContent;
     }
 
     public boolean isOrdered() {
         return isOrdered;
     }
+
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
 }

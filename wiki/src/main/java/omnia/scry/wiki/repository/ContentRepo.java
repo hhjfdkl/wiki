@@ -2,6 +2,7 @@ package omnia.scry.wiki.repository;
 
 import omnia.scry.wiki.daos.ContentDao;
 import omnia.scry.wiki.transfer_objects.Content;
+import omnia.scry.wiki.transfer_objects.ListedContent;
 import org.springframework.jdbc.CannotGetJdbcConnectionException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
@@ -10,6 +11,15 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * TODO:
+ * Clean this class up. The class seems pretty messy
+ * Try and reduce the number of database calls,
+ * or maybe break off some into a new ListedContentRepo & DAO
+ *
+ * Should also update everything to make sure ListedContent integrates more nicely in order to avoid bad values by accident
+ */
 @Component
 public class ContentRepo implements ContentDao
 {
@@ -21,26 +31,69 @@ public class ContentRepo implements ContentDao
     }
 
     @Override
-    public Content createParagraph(int subtopicId, String content) {
-    //TODO
+    public Content createContent(Content content)
+    {
+
         try
         {
+            String sqlContent = "INSERT INTO content (st_id, c_position, c_type, content) VALUES (?, ?, ?::content_type, ?) RETURNING c_id";
+            String contentType = "paragraph";
+            String sqlListed = null;
+            if(content.getListedContent() != null)
+            {
+                sqlListed = "INSERT INTO listed_content (c_id, lc_position, lc_content) VALUES (?, ?, ?)";
+                contentType = "unordered_list";
+                if(content.isOrdered())
+                {
+                    contentType = "ordered_list";
+                }
 
-            String sql = "";
+            }
+
+            Integer id = jdbcTemplate.queryForObject
+                    (
+                      sqlContent
+                    , Integer.class
+                    , content.getSubtopicId()
+                    , content.getPosition()
+                    , contentType
+                    , content.getContent()
+            );
+
+            if (id != null) {
+                boolean contentSuccess = id > 0;
+
+                if (sqlListed != null) {
+                    for (int i = 0; i < content.getListedContent().size(); i++) {
+                        contentSuccess = jdbcTemplate.update(
+                                sqlListed
+                                , id, i * 100, content.getListedContent().get(i).getContent()
+                        ) == 1;
+                    }
+                }
+
+                if (contentSuccess) {
+                    content.setId(id);
+                    return content;
+                }
+
+            }
         } catch (CannotGetJdbcConnectionException e) {
             System.out.println("Could not connect in createContent: " + e.getMessage());
+            throw e;
         }
 
         return null;
     }
 
     @Override
-    public List<Content> getContentBySubtopicId(int subtopicId) {
+    public List<Content> getContentBySubtopicId(int subtopicId)
+    {
         List<Content> content = new ArrayList<>();
 
         try
         {
-            String sql = "SELECT c_id, st_id, c_position, c_type, content FROM content WHERE st_id = ? ORDER BY c_position ASC";
+            String sql = "SELECT c_id, st_id, c_position, c_type, content FROM content WHERE st_id = ? AND is_deleted = false ORDER BY c_position ASC";
             SqlRowSet results = jdbcTemplate.queryForRowSet(sql, subtopicId);
             while(results.next())
             {
@@ -51,7 +104,7 @@ public class ContentRepo implements ContentDao
                             "SELECT lc_id, lc.c_id, lc_position, lc_content FROM listed_content AS lc " +
                             "JOIN content AS c ON c.c_id = lc.c_id " +
                             "WHERE lc.c_id = " + results.getInt("c_id") +
-                            " ORDER BY lc.lc_position ASC";
+                            " AND lc.is_deleted = false ORDER BY lc.lc_position ASC";
                     content.add(
                             mapRowAndListedContentToContent(
                                     results, jdbcTemplate.queryForRowSet(sql2), true
@@ -64,7 +117,7 @@ public class ContentRepo implements ContentDao
                             "SELECT lc_id, lc.c_id, lc_position, lc_content FROM listed_content AS lc " +
                                     "JOIN content AS c ON c.c_id = lc.c_id " +
                                     "WHERE lc.c_id = " + results.getInt("c_id") +
-                                    " ORDER BY lc.lc_position ASC";
+                                    " AND lc.is_deleted = false ORDER BY lc.lc_position ASC";
                     content.add(
                             mapRowAndListedContentToContent(
                                     results, jdbcTemplate.queryForRowSet(sql2), false
@@ -79,9 +132,69 @@ public class ContentRepo implements ContentDao
 
             }
         } catch (CannotGetJdbcConnectionException e) {
+
             System.out.println("Could not connect in getContentBySubtopicId: " + e.getMessage());
+            throw e;
         }
         return content;
+    }
+
+    @Override
+    public Content updateContent(Content content)
+    {
+        try
+        {
+            String sqlContent = "UPDATE content SET (st_id, c_position, c_type, content) = ROW (?, ?, ?::content_type, ?) WHERE c_id = ?";
+            String contentType = "paragraph";
+            String sqlListed = null;
+            if(content.getListedContent() != null)
+            {
+                sqlListed = "UPDATE listed_content SET (c_id, lc_position, lc_content) = ROW (?, ?, ?) WHERE lc_id = ?";
+                contentType = "unordered_list";
+                if(content.isOrdered())
+                {
+                    contentType = "ordered_list";
+                }
+            }
+
+            boolean contentSuccess = jdbcTemplate.update
+                    (sqlContent, content.getSubtopicId(), content.getPosition(), contentType, content.getContent(), content.getId()
+                    ) == 1;
+
+            if (contentSuccess)
+            {
+
+
+                if (sqlListed != null)
+                {
+                    int i = 0;
+                    for (ListedContent lc : content.getListedContent())
+                    {
+                        i++;
+                        if(lc.getId() > 0)
+                        {
+                            jdbcTemplate.update(
+                                    sqlListed
+                                    , content.getId(), lc.getPosition(), lc.getContent(), lc.getId()
+                            );
+                        } else {
+                            jdbcTemplate.update("INSERT INTO listed_content (c_id, lc_position, lc_content) VALUES (?, ?, ?)"
+                            , content.getId(), i * 100, lc.getContent());
+                        }
+                    }
+                }
+
+                if (contentSuccess) {
+
+                    return content;
+                }
+            }
+        } catch (CannotGetJdbcConnectionException e) {
+
+            System.out.println("Could not connect in updateContent: " + e.getMessage());
+            throw e;
+        }
+        return null;
     }
 
     private Content mapRowToContent(SqlRowSet rs)
@@ -96,9 +209,9 @@ public class ContentRepo implements ContentDao
 
     private Content mapRowAndListedContentToContent(SqlRowSet originalRs, SqlRowSet listRs, boolean isOrdered)
     {
-        List<String> listedContent = new ArrayList<>();
+        List<ListedContent> listedContent = new ArrayList<>();
         while(listRs.next()) {
-            listedContent.add(listRs.getString("lc_content"));
+            listedContent.add(new ListedContent(listRs.getInt("lc_id"), listRs.getInt("c_id"), listRs.getInt("lc_position"), listRs.getString("lc_content")));
         }
         return new Content(
                   originalRs.getInt("c_id")
@@ -108,5 +221,16 @@ public class ContentRepo implements ContentDao
                 , listedContent
                 , isOrdered
         );
+    }
+
+    private List<String> mapRowToList(SqlRowSet rs)
+    {
+        List<String> strings = new ArrayList<>();
+        while(rs.next())
+        {
+            strings.add(rs.getString("lc_content"));
+        }
+
+        return strings;
     }
 }

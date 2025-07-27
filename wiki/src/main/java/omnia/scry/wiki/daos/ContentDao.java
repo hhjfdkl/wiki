@@ -6,9 +6,11 @@ import java.util.List;
 
 public interface ContentDao
 {
-
-    Content createParagraph(int subtopicId, String content);
+    Content createContent(Content content);
 
 
     List<Content> getContentBySubtopicId(int subtopicId);
+
+
+    Content updateContent(Content content);
 }

@@ -5,6 +5,7 @@ import omnia.scry.wiki.daos.SubtopicDao;
 import omnia.scry.wiki.daos.TopicDao;
 import omnia.scry.wiki.transfer_objects.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +27,12 @@ public class FullArticleService
     public FullArticle getFullArticle(String topicName)
     {
         Topic topic = t.getTopicByName(topicName);
-        List<Subtopic> subtopics = s.getSubtopicsByTopicName(topic.getName());
+
+        if(topic == null)
+        {
+            throw new IllegalArgumentException("No topic found for " + topicName);
+        }
+        List<Subtopic> subtopics = s.getSubtopicsByTopicName(topic.getName());  //null pointer exception; It works but I keep getting a null pointer exception here???
         List<SubtopicWithContent> subAndContent = new ArrayList<>();
 
         for(Subtopic st : subtopics)
@@ -38,6 +44,10 @@ public class FullArticleService
         return new FullArticle(topic, subAndContent);
 
     }
+
+
+
+
 
 
 }
