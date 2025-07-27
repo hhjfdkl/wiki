@@ -6,6 +6,10 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * This class actually makes the documents show up to the user
+ * These endpoints will be used to receive HTML documents created by Thymeleaf
+ */
 @Controller
 public class PageController
 {

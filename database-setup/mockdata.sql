@@ -1,3 +1,5 @@
+--working on adding actually readable data into this.
+
 insert into topic (topic_name, topic_position)
 values ('topic1', 100), ('topic2', 200), ('topic3', 300);
 
